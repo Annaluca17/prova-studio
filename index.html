@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio CDL Paolo Messina — UI Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'DM Sans', system-ui, sans-serif; color: #1a1a18; overflow-x: hidden; background: #fff; }
+html { scroll-behavior: smooth; }
+#root { padding-top: 63px; }
+@media (max-width: 660px) {
+  .hero-cards-wrap { grid-template-columns: 1fr !important; }
+  .chi-grid-wrap { grid-template-columns: 1fr !important; }
+  .contatti-grid-wrap { grid-template-columns: 1fr !important; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="Components.jsx"></script>
+<script type="text/babel" src="HeroView.jsx"></script>
+<script type="text/babel" src="AziendeView.jsx"></script>
+<script type="text/babel" src="PrivatiView.jsx"></script>
+<script type="text/babel" src="ChiSono.jsx"></script>
+<script type="text/babel" src="Contatti.jsx"></script>
+
+<script type="text/babel">
+const { useState, useCallback } = React;
+
+function App() {
+  const [view, setView] = useState('home'); // 'home' | 'aziende' | 'privati'
+
+  const showView = useCallback((v) => {
+    setView(v);
+    window.scrollTo({ top: 0 });
+  }, []);
+
+  const showHome = useCallback(() => {
+    setView('home');
+    window.scrollTo({ top: 0 });
+  }, []);
+
+  const scrollTo = useCallback((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.pageYOffset - 70;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }, []);
+
+  return (
+    <>
+      <Nav
+        activeView={view !== 'home' ? view : null}
+        onShowHome={showHome}
+        onShowView={showView}
+        onScrollTo={scrollTo}
+      />
+
+      {view === 'home' && <HeroView onShowView={showView} />}
+      {view === 'aziende' && <AziendeView onShowView={showView} />}
+      {view === 'privati' && <PrivatiView onShowView={showView} />}
+
+      <ChiSono />
+      <Contatti />
+      <Footer onShowView={showView} onScrollTo={scrollTo} />
+    </>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>
